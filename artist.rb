@@ -10,17 +10,20 @@ attr_reader :id
 
   def save
     sql = "
-    INSERT INTO artists (name) VALUES ($1)
+    INSERT INTO artists (name) VALUES ($1) RETURNING *
     "
     values = [@name]
     result = SqlRunner.runner(sql, values)
-    # result2 = result[0]
-    # result3 = result2['id']
-    # @id = result3.to_i
+    @id = result[0]['id'].to_i
  end
 
   def self.list_all
-    something
+    sql = "
+    SELECT * FROM artists
+    "
+    hash_of_artists = SqlRunner.runner(sql)
+    array_of_artists = hash_of_artists.map {|artist| Artist.new(artist)}
+    return array_of_artists
   end
 
 end
